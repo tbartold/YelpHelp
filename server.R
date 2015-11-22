@@ -1,53 +1,36 @@
 library(shiny)
 
+require(maps)
 require(ggmap)
 require(Matrix)
 require(data.table)
 
-
 if (file.exists("maparray.rda")) {
   load("maparray.rda")
 } else {
+  # create all the rdas so we can load them
+  source("MakeMaps.R")
   maparray<-grabmaps()
   save(maparray,file="maparray.rda")
 }
 
-if (file.exists("cities.rda")) {
-  load("cities.rda")
-} else {
-  # now start doing map stuff
-  # the city names were manually identified - we should do this automatically
-  cityname<-c('Edinburgh', 'Karlsruhe', 'Montreal', 'Waterloo', 'Pittsburgh', 
-              'Charlotte', 'Urbana-Champaign', 'Phoenix', 'Las Vegas', 'Madison\ WI')
-  # this should allow us to get the coords of the city centers (so we can get the maps?)
-  cities<-data.frame(cityname,geocode(cityname))
-  rm(cityname)
-  save(cities,file="cities.rda")
-}
+#load the cities geo locations
+load("cities.rda")
 
-if (file.exists("businesses.rda")) {
-  load("businesses.rda")
-} else {
-  # rebuild the tables for the apps
-  businesses<-b_data[,c("business_id","longitude","latitude","stars")]
-  names(businesses)<-c("business_id","lon","lat","stars")
-  save(businesses, file="businesses.rda")
-}
-
-load("/data/sparse_l.rda")
-
+# all of these rdas would be created along with maparray in MakeMaps.R
+# we'll use these same criteria repeatedly - we created them back in the builder
+# just the business id, lon, lat and average stars
+load("businesses.rda")
+# business and category cross references
 load("bus_cat.rda")
 load("bus.rda")
 load("cat.rda")
+# just the userids from the users dataframe
 load("userids.rda")
-
-# set the key we need to join the tables
-#map.dat <- data.table(map_data('world'))
-#ggplot() + geom_polygon(aes(long,lat,group=group),fill="grey65", data=map.dat) + theme_bw() + theme(axis.text = element_blank(), axis.title=element_blank()) +coord_map("polyconic",xlim = c(-130,10), ylim = c(25,60)) 
-# we'll use these same criteria repeatedly
 
 cityname<-c('Edinburgh', 'Karlsruhe', 'Montreal', 'Waterloo', 'Pittsburgh', 
             'Charlotte', 'Urbana-Champaign', 'Phoenix', 'Las Vegas', 'Madison\ WI')
+
 shinyServer(
   function(input, output, session) {
     
@@ -123,12 +106,12 @@ shinyServer(
           # when we have recommendations instead, we'll load a different data set
           # recomendations exist in a file called "results_<loc>_<cat>_<x>_<y>.rda"
           #if a file exists, we load it now, on the fly
-          fileglob<-paste0(datadir,"result_",cityname,"_",gsub("/", "", category),"_*.rda")
+          fileglob<-paste0(datadir,"result_",cityname,"_",gsub("/", "", input$Category),"_*.rda")
           if (length(Sys.glob(fileglob))>0){
             # found it, we can load it and use it (for some users)
             load(Sys.glob(fileglob))
             # this loads a results object which contains the model
-            
+            model<-result$model
           }
           
         # select only the mapdata we want to show
