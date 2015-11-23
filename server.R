@@ -14,6 +14,8 @@ if (file.exists("maparray.rda")) {
   save(maparray,file="maparray.rda")
 }
 
+datadir<-"data/"
+
 #load the cities geo locations
 load("cities.rda")
 

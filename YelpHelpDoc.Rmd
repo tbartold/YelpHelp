@@ -26,7 +26,7 @@ Initially I decided that there was just too much data to achieve any results in 
 
 Matrix factorization has proven to be a useful technique for reducing this kind of problem, so I explored a variety of factorization techniques, and how to implement them in R. I started by selecting a small data set from the data, limiting the scope to just a thousand users and a hundred businesses to get a handle on what I could accomplish with the compute power I had (a MacBook running RStudio).
 
-The main lesson I leared was that standard factorization is not that useful. WI needed to be careful about how to evaluate the factored matrices. Taking the factors and recombining them into a big matrix was time consuming, in order to identify the discrepancies between the true ratings and predicted ratings. At first I didn’t realize that the standard factorization packages i was trying to use were not working at all. Although I was ble to validate the factorization, the predictions were horrible. The problem was that they were predicting the unknowns to match either zero or the mean or whatever I used to fill in the rest of the matrix initially.
+The main lesson I leared was that standard factorization is not that useful. I needed to be careful about how to evaluate the factored matrices. Taking the factors and recombining them into a big matrix was time consuming, in order to identify the discrepancies between the true ratings and predicted ratings. I did try multiple methods to get fast factorization, regular svd (single value decomposition), nmf (non-negative matrix factorization), irlba (augmented implicitly restarted Lanczos bi-diagonalization), but it just wasnt working. At first I didn’t realize that the standard factorization packages I was trying to use were not working at all. Although I was able to validate the factorization, the predictions were horrible. The problem was that they were predicting the unknowns to match either zero or the mean or whatever I used to fill in the rest of the matrix initially.
 
 The big break came when I found a blog post by Saurabh Bhatnagar (http://sanealytics.com/2015/03/10/ matrix-factorization/) which made perfect sense. I’ve implemented a version of his algorithm to fir the known ratings without skewing the results towards the unknown ratings. The algorithm is basically doing Single Value Decomposition (Matrix Facotrization) but with a specialized cost function that ignores the unknown locations in the matrix.
 
@@ -66,3 +66,10 @@ Other future planned enhancements were not made. I intended to zoom in closer to
 
 I think the project has progressed well, but there is a great deal more I would still like to do.
 
+Here are links to everything making up this project:
+
+The Source Code: https://github.com/tbartold/YelpHelp
+
+The R Presentation: http://rpubs.com/bartold/YelpHelp
+
+The Shiny App: https://bartold.shinyapps.io/YelpHelp
