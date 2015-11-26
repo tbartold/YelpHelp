@@ -21,10 +21,10 @@ shinyUI(
   pageWithSidebar(
     headerPanel("Where would you like to go today?"),
     sidebarPanel(
-
+      
       helpText("Choose a Location"),
       selectInput('Location', 'Where?', location, selected=location[0]),
-
+      
       conditionalPanel(
         condition = "input.Location!=''",
         helpText("Choose a Category"),
@@ -32,8 +32,8 @@ shinyUI(
       
       conditionalPanel(
         condition = "input.Category!=''",
-        helpText("Enter your numeric user id (use 0 if you don't have one)"),
-        numericInput('User', 'Whom?', 0, min = 0, max = maxuser)),
+        helpText("Select your user id (if listed in the following)"),
+        uiOutput('userlist')),
       
       helpText("The datasource for this app is the Yelp Dataset Challenge")
     ),
